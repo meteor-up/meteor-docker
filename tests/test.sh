@@ -45,7 +45,7 @@ change_version() {
   sleep 1
 
   echo "=> npm install babel-runtime"
-  hide_output meteor npm install babel-runtime -q || true
+  NODE_TLS_REJECT_UNAUTHORIZED=0 hide_output meteor npm install babel-runtime -q || true
 
   # At some point, the default app started creating Mongo collections
   # Remove the default server code so we can test without Mongo
@@ -115,7 +115,7 @@ test_built_docker() {
   cat <<EOT > Dockerfile
 FROM $DOCKER_IMAGE
 COPY --chown=app:app . /built_app
-RUN cd /built_app/programs/server && npm install $NPM_OPTIONS
+RUN cd /built_app/programs/server && NODE_TLS_REJECT_UNAUTHORIZED=0 npm install $NPM_OPTIONS
 EOT
 
   hide_output docker build --build-arg NODE_VERSION="$NODE_VERSION" -t zodern/meteor-test .

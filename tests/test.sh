@@ -75,7 +75,7 @@ test_bundle() {
     -v "$PWD"/../bundle:/bundle \
     -e "ROOT_URL=http://localhost.com" \
     -e "NPM_INSTALL_OPTIONS=--no-bin-links" \
-    -e "NODE_TLS_REJECT_UNAUTHORIZED=0"\ # Install npm deps in old npm versions
+    -e "NODE_TLS_REJECT_UNAUTHORIZED=0" \
     -p 3000:3000 \
     -d \
     --name meteor-docker-test \

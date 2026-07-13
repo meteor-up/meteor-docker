@@ -43,7 +43,7 @@ jobs:
           - '--release=3.3.2'
           - '--release=3.4.1'
           # Latest version
-          -
+          - 'latest'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

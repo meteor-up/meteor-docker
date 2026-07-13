@@ -9,7 +9,8 @@ RUN export VERSION="2.1.1" && \
   mkdir phantomjs && \
   tar xvjf phantomjs.tar.bz2 -C ./phantomjs --strip-components=1  && \
   mv phantomjs /usr/local/share && \
-  ln -sf /usr/local/share/phantomjs/bin/phantomjs /usr/local/bin && \
+  printf '#!/bin/sh\n# phantomjs statically links an old OpenSSL that can not read the\n# openssl.cnf in newer Debian versions\nOPENSSL_CONF=/dev/null exec /usr/local/share/phantomjs/bin/phantomjs "$@"\n' > /usr/local/bin/phantomjs && \
+  chmod +x /usr/local/bin/phantomjs && \
   rm -rf ./phantomjs ./phantomjs.tar.bz2
 ONBUILD USER root
 ONBUILD ARG NODE_VERSION='8.17.0'

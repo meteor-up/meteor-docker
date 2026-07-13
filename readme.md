@@ -7,8 +7,7 @@ Docker image to run Meteor apps.
 
 ### Features
 
-- One image supports every Meteor version (tested with 1.2 - 2.13 and newer)
-- Mostly supports Meteor 3 (requires making `programs/server/shrinkwrap.json` [writable](https://github.com/meteor/meteor/issues/12932) due to a bug in Meteor 3)
+- One image supports every Meteor version (tested with 1.2 - 3.5)
 - Automatically uses correct node and npm version
 - Runs app as non-root user
 - Compatible with Meteor up
@@ -17,8 +16,12 @@ Docker image to run Meteor apps.
 
 - `zodern/meteor` The recommended version. Runs the app as a non-root user.
 - `zodern/meteor:root` Compatible with meteord. Runs the app as the root user and has phantomjs installed. Any notes below about permissions do not apply to this image.
-- `zodern/meteor:<major>` or `zodern/meteor:<major>-root` (for example, `zodern/meteor:1`) Use the latest minor or patch version, without any breaking changes in a new major version (such as changing to a newer Debian base image).
+- `zodern/meteor:<major>` or `zodern/meteor:<major>-root` (for example, `zodern/meteor:1`) Use the latest minor or patch version, without any breaking changes from a new major version (such as changing to a newer Debian base image).
 - `zodern/meteor:slim` Coming soon. Is a smaller image without node or npm pre-installed. During ONBUILD or when starting the app, it will install the correct version.
+
+### Breaking changes in v2
+
+Version 2 changed the base image from Debian 11 (bullseye) to Debian 13 (trixie). This is needed to support the uws DDP transport in Meteor 3.5. Old Meteor versions are still compatible. If the new base image causes problems for your app, you can use `zodern/meteor:1` or `zodern/meteor:1-root`.
 
 ## How To Use
 

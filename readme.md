@@ -17,6 +17,7 @@ Docker image to run Meteor apps.
 
 - `zodern/meteor` The recommended version. Runs the app as a non-root user.
 - `zodern/meteor:root` Compatible with meteord. Runs the app as the root user and has phantomjs installed. Any notes below about permissions do not apply to this image.
+- `zodern/meteor:<major>` or `zodern/meteor:<major>-root` (for example, `zodern/meteor:1`) Use the latest minor or patch version, without any breaking changes in a new major version (such as changing to a newer Debian base image).
 - `zodern/meteor:slim` Coming soon. Is a smaller image without node or npm pre-installed. During ONBUILD or when starting the app, it will install the correct version.
 
 ## How To Use

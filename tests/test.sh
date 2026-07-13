@@ -77,6 +77,7 @@ test_bundle() {
     -e "NPM_INSTALL_OPTIONS=--no-bin-links" \
     -e "NODE_TLS_REJECT_UNAUTHORIZED=0" \
     -e "npm_config_strict_ssl=false" \
+    $EXTRA_DOCKER_ARGS \
     -p 3000:3000 \
     -d \
     --name meteor-docker-test \
@@ -172,6 +173,21 @@ test_version() {
   verify
 }
 
+# UWS requires a newer glibc version. Make sure it works with the base image.
+# Reuses the app created by the previous test_version call
+# TODO: create new app
+test_uws_transport() {
+  echo "=> Testing uws DDP transport"
+  build_app
+  EXTRA_DOCKER_ARGS="-e DDP_TRANSPORT=uws" test_bundle
+  verify
+}
+
+test_latest() {
+  test_version
+  test_uws_transport
+}
+
 test_versions() {
   echo "--- Testing Docker Image $DOCKER_IMAGE ---"
 
@@ -201,7 +217,9 @@ test_versions() {
     test_version "--release=2.13.3"
 
     # Latest version
-    test_version
+    test_latest
+  elif [[ "$METEOR_TEST_OPTION" == "latest" ]]; then
+    test_latest
   else
     test_version "$METEOR_TEST_OPTION"
   fi
@@ -218,4 +236,10 @@ test_versions
 
 DOCKER_IMAGE="zodern/meteor:root"
 NPM_OPTIONS="--unsafe-perm"
+
+if [[ -z ${METEOR_TEST_OPTION+x} || "$METEOR_TEST_OPTION" == "latest" ]]; then
+  echo "=> Checking phantomjs"
+  docker run --rm --entrypoint phantomjs "$DOCKER_IMAGE" --version
+fi
+
 test_versions

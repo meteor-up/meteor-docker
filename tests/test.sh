@@ -10,6 +10,7 @@ sudo rm -rf /tmp/docker-meteor-tests
 mkdir /tmp/docker-meteor-tests
 cp -r ../ /tmp/docker-meteor-tests
 cd /tmp/docker-meteor-tests/tests
+TESTS_DIR="$PWD"
 
 rm -rf ./app
 rm -rf ./bundle
@@ -188,6 +189,37 @@ test_latest() {
   test_uws_transport
 }
 
+# Docker older than 20.10.10 denies the clone3 syscall with EPERM, which stops
+# node from creating threads on the Debian 13 base image. We can't fix that from
+# inside the image, but we should explain it instead of letting nvm report the
+# npm "prefix" option as "". clone3-eperm-seccomp.json reproduces the old
+# default seccomp profile.
+test_clone3_check() {
+  echo "=> Checking clone3 detection"
+
+  set +e
+  output=$(docker run --rm \
+    --security-opt seccomp="$TESTS_DIR/clone3-eperm-seccomp.json" \
+    --entrypoint bash \
+    "$DOCKER_IMAGE" /home/app/scripts/setup_nvm.sh 2>&1)
+  code=$?
+  set -e
+
+  if [ "$code" -eq 0 ]; then
+    echo "FAIL: expected a runtime without clone3 to be rejected"
+    echo "$output"
+    exit 1
+  fi
+
+  if ! echo "$output" | grep -q "20.10.10"; then
+    echo "FAIL: the error did not say which Docker version is needed"
+    echo "$output"
+    exit 1
+  fi
+
+  echo "SUCCESS"
+}
+
 test_versions() {
   echo "--- Testing Docker Image $DOCKER_IMAGE ---"
 
@@ -232,6 +264,11 @@ export DISABLE_REACT_FAST_REFRESH="true"
 
 DOCKER_IMAGE="zodern/meteor"
 NPM_OPTIONS=""
+
+if [[ -z ${METEOR_TEST_OPTION+x} || "$METEOR_TEST_OPTION" == "latest" ]]; then
+  test_clone3_check
+fi
+
 test_versions
 
 DOCKER_IMAGE="zodern/meteor:root"

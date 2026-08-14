@@ -23,6 +23,9 @@ Docker image to run Meteor apps.
 
 Version 1 changed the base image from Debian 11 (bullseye) to Debian 13 (trixie). This is needed to support the uws DDP transport in Meteor 3.5. Old Meteor versions are still compatible. If the new base image causes problems for your app, you can use `zodern/meteor:0` or `zodern/meteor:0-root`.
 
+Version 1 needs Docker 20.10.10 or newer, due to changes in Debian 13. Use `zodern/meteor:0` if you can not update Docker. Using an older version of Docker can result in `node[122]: pthread_create: Operation not permitted. nvm is not compatible with the npm config "prefix" option: currently set to "" `
+
+
 ## How To Use
 
 ### Permissions

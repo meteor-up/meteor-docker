@@ -1,4 +1,9 @@
 set -e
+
+# On older docker versions, `nvm use` errors with a confusing message.
+# First check if we are using a compatible docker version.
+sh /home/app/scripts/check_clone3.sh
+
 export NVM_DIR="/home/app/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ]
 . "$NVM_DIR/nvm.sh"
